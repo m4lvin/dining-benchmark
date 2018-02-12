@@ -1,0 +1,35 @@
+paid : Bool[5]
+chan : Bool[5]
+said : Bool[5]
+
+init_cond = ((neg paid[0]) /\ (neg paid[1]) /\ (neg paid[2]) /\ (neg paid[3]) /\ (neg paid[4]) )
+         \/ ((    paid[0]) /\ (neg paid[1]) /\ (neg paid[2]) /\ (neg paid[3]) /\ (neg paid[4]) )
+         \/ ((neg paid[0]) /\ (    paid[1]) /\ (neg paid[2]) /\ (neg paid[3]) /\ (neg paid[4]) )
+         \/ ((neg paid[0]) /\ (neg paid[1]) /\ (    paid[2]) /\ (neg paid[3]) /\ (neg paid[4]) )
+         \/ ((neg paid[0]) /\ (neg paid[1]) /\ (neg paid[2]) /\ (    paid[3]) /\ (neg paid[4]) )
+         \/ ((neg paid[0]) /\ (neg paid[1]) /\ (neg paid[2]) /\ (neg paid[3]) /\ (    paid[4]) )
+
+-- Agents are numbered in the order they appear.
+agent C0 "dc_agent_protocol" (paid[0], chan[0], chan[1], said)
+agent C1 "dc_agent_protocol" (paid[1], chan[1], chan[2], said)
+agent C2 "dc_agent_protocol" (paid[2], chan[2], chan[3], said)
+agent C3 "dc_agent_protocol" (paid[3], chan[3], chan[4], said)
+agent C4 "dc_agent_protocol" (paid[4], chan[4], chan[0], said)
+
+-- This talks about the knowledge of the first agent.
+spec_spr_xn =
+  X 6 (neg paid[0]) => (
+    ( Knows C0 (  (neg paid[0])
+               /\ (neg paid[1])
+               /\ (neg paid[2])
+               /\ (neg paid[3])
+               /\ (neg paid[4])
+               )
+    ) \/ (
+       (Knows C0 (paid[1] \/ paid[2] \/ paid[3] \/ paid[4]))
+    /\ (neg (Knows C0 paid[1]))
+    /\ (neg (Knows C0 paid[2]))
+    /\ (neg (Knows C0 paid[3]))
+    /\ (neg (Knows C0 paid[4]))
+    )
+  )

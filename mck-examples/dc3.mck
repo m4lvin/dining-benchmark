@@ -1,0 +1,29 @@
+paid : Bool[3]
+chan : Bool[3]
+said : Bool[3]
+
+init_cond = ((neg paid[0]) /\ (neg paid[1]) /\ (neg paid[2]))
+         \/ ((    paid[0]) /\ (neg paid[1]) /\ (neg paid[2]))
+         \/ ((neg paid[0]) /\ (    paid[1]) /\ (neg paid[2]))
+         \/ ((neg paid[0]) /\ (neg paid[1]) /\ (    paid[2]))
+
+-- Agents are numbered in the order they appear.
+agent C0 "dc_agent_protocol" (paid[0], chan[0], chan[1], said)
+agent C1 "dc_agent_protocol" (paid[1], chan[1], chan[2], said)
+agent C2 "dc_agent_protocol" (paid[2], chan[2], chan[0], said)
+
+-- This talks about the knowledge of the first agent.
+-- spr = synchronous perfect recall
+
+spec_spr_xn =
+  X 6 (neg paid[0]) => (
+    ( Knows C0 (  (neg paid[0])
+               /\ (neg paid[1])
+               /\ (neg paid[2])
+               )
+    ) \/ (
+       (Knows C0 (paid[1] \/ paid[2]))
+    /\ (neg (Knows C0 paid[1]))
+    /\ (neg (Knows C0 paid[2]))
+    )
+  )

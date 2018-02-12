@@ -1,0 +1,33 @@
+VARS
+  0,      -- the NSA paid
+  1,2,3,4, -- cryptographer i paid
+  5,6,7,8 -- shared bits/coins
+
+LAW -- exactly one cryptographer or the NSA paid
+  OR( AND( 0, ~1, ~2, ~3, ~4)
+    , AND(~0,  1, ~2, ~3, ~4)
+    , AND(~0, ~1,  2, ~3, ~4)
+    , AND(~0, ~1, ~2,  3, ~4)
+    , AND(~0, ~1, ~2, ~3,  4)
+    )
+
+OBS
+  alice: 1, 5,6
+  bob  : 2,   6,7
+  carol: 3,     7,8
+  dave:  4, 5,    8
+
+VALID?
+  [?! XOR (1, 5, 6)] -- After everyone announces the
+  [?! XOR (2, 6, 7)] -- XOR of whether they paid and
+  [?! XOR (3, 7, 8)] -- the coins they see ...
+  [?! XOR (4, 5, 8)]
+  AND (
+    -- if the NSA paid this is common knowledge:
+    0 -> (alice,bob,carol,dave) comknow that 0,
+    -- if one of the agents paid, the others don't know that:
+    1 -> AND (~ bob   knows that 1, ~ carol knows that 1, ~ dave  knows that 1),
+    2 -> AND (~ alice knows that 2, ~ carol knows that 2, ~ dave  knows that 2),
+    3 -> AND (~ alice knows that 3, ~ bob   knows that 3, ~ dave  knows that 3),
+    4 -> AND (~ alice knows that 4, ~ bob   knows that 4, ~ carol knows that 4)
+  )

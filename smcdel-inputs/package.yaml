@@ -1,0 +1,11 @@
+name:           smcdel-diningcrypto
+version:        0.1.0
+
+dependencies:
+  - base
+  - smcdel
+  - HasCacBDD
+  - cudd
+
+executable:
+  main: smcdel-diningcrypto.hs
